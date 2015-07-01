@@ -1,0 +1,50 @@
+.profile{
+	overflow: hidden;
+	/border:1px solid #eee;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+.profile .form-horizontal .control-label{
+	text-align: left;
+}
+.avatar{
+	width: 60px;
+	height: 60px;
+	border: 1px solid #eee;
+}
+#file-uploader{
+	display: inline;
+	color: transparent;
+}
+.file-wrapper {
+  cursor: pointer;
+  1display: inline-block;
+  overflow: hidden;
+  position: relative;
+  left: 14px;
+}
+.file-upload{
+	position: absolute;
+	left: 0;
+	top: -5px;
+	display: inline-block;
+	float: left;
+}
+.file-remove{
+	display: inline-block;
+	position: absolute;
+	top: -5px;
+	left: 60%;
+	float: left;
+	
+}
+.graph-wrapper-white{
+	background-color: white;
+}
+.profile-submit{
+	margin-top: 17px;
+	margin-bottom: 0;
+}
+.profile-button{
+	margin-right: 15px;
+}

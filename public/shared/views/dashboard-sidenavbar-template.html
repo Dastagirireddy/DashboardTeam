@@ -1,0 +1,75 @@
+<aside class="sidebar-fixed" id="sideToggle" >
+    <!-- Side bar toggle and logout part -->
+    <div class="sidebar-toggle sidebar-border clearfix">
+        <a href="#" class="btn btn-sm" id="slideSidebar">
+            <span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+        </a>
+        <a data-ng-click="logoutConfirm()" class="pull-right btn btn-sm"><span class="glyphicon glyphicon-off" aria-hidden="true"></span></a>
+    </div> <!-- Side bar toggle and logout part ends here -->
+    <!-- Loading user details part starts here -->
+    <div class="sidebar-user sidebar-border">
+        <img src="/modules/analytics/images/avatar.png" class="img-circle" alt="User icon"/>
+        <div class="user-details">
+            <strong>{{ username }}</strong>
+            <ul class="list-inline">
+                <li><a ui-sref="dashboard.profile">Profile</a></li>
+                <li><a ui-sref="dashboard.settings">Settings</a></li>
+            </ul>
+        </div>
+    </div> <!-- User details part ends here -->
+    <!-- Side bar search part starts here -->
+    <div class="sidebar-border sidebar-search">
+        <!-- Search box -->
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" class="form-control input-sm" id="search" placeholder="Search..">
+                <div class="input-group-addon btn-sm" id="search-toggle">
+                    <span class="glyphicon glyphicon-search"></span>
+                </div>
+            </div>
+        </div> <!-- Search box ends here -->
+    </div> <!-- side bar search part ends here -->
+    <!-- Main menu starts here -->
+    <div class="main-menu">
+        <ul>
+            <li>
+                <a ui-sref="dashboard.overview" data-ng-class="{ activePage: isSidebarActive('overview') }"><i class="fa fa-desktop fa-lg"></i><span>Dashboard</span></a>
+                <span class="menu-hover"></span>
+            </li>
+            <li>
+                <a ui-sref="dashboard.analytics" data-ng-class="{ activePage: isSidebarActive('analytics') }"><i class="fa fa-bar-chart fa-lg"></i><span>Analytics</span></a>
+                <span class="menu-hover"></span>
+            </li>
+            <li>
+                <a ui-sref="dashboard.visitorlist" data-ng-class="{ activePage: isSidebarActive('visitorlist') }"><i class="fa fa-list-alt fa-lg"></i><span>Visitor List</span></a>
+                <span class="menu-hover"></span>
+            </li>
+            <li>
+                <a ui-sref="dashboard.chat-history" data-ng-class="{ activePage: isSidebarActive('chat-history') }"><i class="fa fa-envelope fa-lg"></i><span>Chat History</span></a>
+                <span class="menu-hover"></span>
+            </li>
+            <li>
+                <a ui-sref="dashboard.user-agents" data-ng-class="{ activePage: isSidebarActive('user-agents') }"><i class="glyphicon glyphicon-king fa-lg" aria-hidden="true"></i><span>User Agents</span></a>
+                <span class="menu-hover"></span>
+            </li>
+            <li>
+                <a ui-sref="dashboard.profile" data-ng-class="{ activePage: isSidebarActive('profile') }"><i class="fa fa-user fa-lg"></i><span>Profile</span></a>
+                <span class="menu-hover"></span>
+            </li>
+            <li>
+                <a ui-sref="dashboard.settings" data-ng-class="{ activePage: isSidebarActive('settings') }"><i class="fa fa-gear fa-lg"></i><span>Settings</span></a>
+                <span class="menu-hover"></span>
+            </li>
+            <li>
+                <a ui-sref="dashboard.help" data-ng-class="{ activePage: isSidebarActive('help') }"><i class="glyphicon glyphicon-question-sign fa-lg"></i><span>Help</span></a>
+                <span class="menu-hover"></span>
+            </li>
+        </ul>
+    </div> <!-- Main menu ends here -->
+    <!-- Welcome notes statrs here -->
+    <div class="site-info">
+        <div class="alert alert-info" role="alert">
+            Welcome, Thanks for using CI Analytics.
+        </div>
+    </div> <!-- Welcome notes ends here -->
+</aside>

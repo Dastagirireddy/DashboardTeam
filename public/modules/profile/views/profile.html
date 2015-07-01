@@ -1,0 +1,73 @@
+<div>
+    <!-- Breadcumb starts here -->
+    <dashboard-breadcumb data-breadcumb="Profile"></dashboard-breadcumb>
+    <!-- Breadcumb ends here -->
+    <!-- Dashboard header starts here -->
+    <dashboard-title data-mytitle="Profile"></dashboard-title>
+    <!-- Dashboard ends here -->
+    <!-- Graphs content starts here -->
+    <div class="graph-wrapper graph-wrapper-white">
+        <!-- Profile content start here -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="profile">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="inputFirstname" class="col-sm-3 control-label">Firstname</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="inputFirstname" placeholder="Firstname">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputLastname" class="col-sm-3 control-label">Lastname</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="inputLastname" placeholder="Lastname">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputUsername" class="col-sm-3 control-label">Display Username</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="inputUsername" placeholder="Username">
+                            </div>
+                        </div>                                    
+                        <div class="form-group">
+                            <label for="inputEmail" class="col-sm-3 control-label">Email</label>
+                            <div class="col-sm-6">
+                                <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPhone" class="col-sm-3 control-label">Phone</label>
+                            <div class="col-sm-6">
+                                <input type="tel" class="form-control" id="inputPhone" placeholder="Mobile number">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputDisplay" class="col-sm-3 control-label">Display Message</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="inputDisplay" placeholder="Display text on chatbox">
+                            </div>
+                        </div>                                    
+                        <div class="form-group">
+                            <label for="inputImage" class="col-sm-3 control-label">Avatar</label>
+                            <div class="col-sm-6">
+                                <img src="/modules/profile/images/avatar.png" alt="avatar" class="img-rounded avatar" />
+                                <span class="file-wrapper">
+                                    <input type="file" id="file-uploader" />
+                                    <span class="btn btn-warning file-upload"><i class="fa fa-upload"></i> Upload Image</span>
+                                    <span class="btn btn-danger file-remove"><i class="fa fa-trash-o"></i> Remove</span>
+                                </span>
+                            </div>
+                        </div>                                                                           
+                        <div class="form-group profile-submit">
+                            <div class="col-md-8">
+                                <button class="btn btn-info profile-button"><i class="fa fa-save"></i> Save changes</button>
+                                <button class="btn btn-default profile-button"><i class="fa fa-undo"></i> Revert changes</button>
+                            </div>
+                        </div>                                 
+                    </form>                                                                
+                </div>
+            </div>
+        </div> <!-- Profile content ends here -->
+    </div> <!-- Starts content ends here -->
+</div>

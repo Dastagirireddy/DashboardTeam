@@ -1,0 +1,30 @@
+<div id="dashboard-wrapper" data-ng-controller="DashboardController">
+    <!-- Loading Dashboard Header  starts here -->
+    <dashboard-header></dashboard-header>
+    <!-- Loading Dashboard header ends here -->
+    <!-- Loading body wrapper -->
+    <section class="body-wrapper clearfix" id="bodyContent">
+        <!-- Fixed side bar starts here -->
+        <dashboard-sidebar></dashboard-sidebar>
+        <!-- Fixed side bar ends here -->    
+        <!-- Main content to load the templates using angular routing -->
+        <section class="main-content">
+            <!-- Loading dashboard templates here -->
+            <div ui-view>
+                
+            </div> <!-- Loading dashboard templates ends here -->
+        </section><!-- Main content ends here -->
+    </section> <!-- body wrapper ends here -->
+    <!-- Footer section starts here -->
+    <dashboard-footer></dashboard-footer>
+    <!-- Footer section ends here -->
+    <div class="logout-confirm-overlay" data-ng-if="logoutConfirmValue">
+        <div class="logout-wrapper">
+            <h4>Do you want to logout ?</h4>
+            <ul class="list-inline logout-menu">
+                <li><a class="btn btn-success" data-ng-click="logout()">Logout</a></li>
+                <li><a href="" class="btn btn-danger" data-ng-click="logoutCancel()">Cancel</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,125 @@
+<div>
+    <!-- Breadcumb starts here -->
+    <dashboard-breadcumb data-breadcumb="Analytics"></dashboard-breadcumb>
+    <!-- Breadcumb ends here -->
+    <!-- Dashboard header starts here -->
+    <dashboard-title data-mytitle="Analytics"></dashboard-title>
+    <!-- Dashboard ends here -->
+    <!-- Graphs content starts here -->
+    <div class="graph-wrapper">
+        <!-- Grids section starts from here -->
+        <div class="row" data-ng-controller="SocketDataController">
+            <!-- grid-->
+            <div class="col-sm-6 col-md-3">
+                <div class="grid-view bg-danger">
+                    <h2>{{ todayPages }}</h2>
+                    <h5>Page Views</h5>
+                    <i class="fa fa-arrow-circle-o-{{ pagePerc.icon}}"></i>
+                    <span>{{ pagePerc.perc }}% {{ pagePerc.performance }} than yesterday</span>
+                    <div class="stat-icon">
+                        <i class="fa fa-bar-chart-o fa-3x"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-3">
+                <div class="grid-view bg-info">
+                    <h2>{{ visitorCount.oldcount }}</h2>
+                    <h5>Returning Visitors</h5>
+                    <i class="fa fa-arrow-circle-o-{{ returningPerc.icon }}"></i>
+                    <span>{{ returningPerc.perc }}% {{ returningPerc.performance }} than yesterday</span>
+                    <div class="stat-icon">
+                        <i class="fa fa-user fa-3x"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-3">
+                <div class="grid-view bg-warning">
+                    <h2>{{ visitorCount.newcount }}</h2>
+                    <h5>New Visitors</h5>
+                    <i class="fa fa-arrow-circle-o-{{ newPerc.icon }}"></i>
+                    <span>{{ newPerc.perc }}% {{ newPerc.performance }} than yesterday</span>
+                    <div class="stat-icon">
+                        <i class="fa fa-user fa-3x"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-3">
+                <div class="grid-view bg-success">
+                    <h2 ng-bind="live"></h2>
+                    <h5>Live Visitors</h5>
+                    <i class="fa fa-arrow-circle-o-{{ livePerc.icon }}"></i>
+                    <span>{{ livePerc.perc }}% {{ livePerc.performance }} than yesterday</span>
+                    <div class="stat-icon">
+                        <i class="fa fa-user fa-3x"></i>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- Grids section ends here -->
+        <!-- Graph column1 starts from here -->
+        <div class="row">
+            <!-- Column1 starts from here -->
+            <div class="col-md-8">
+                <!-- Line graph starts from here -->
+                <line-graph-directive data-ng-controller="ClientDetailsController"></line-graph-directive>
+                <!-- Line graph ends here -->
+                <!-- Table1 starts from here -->
+                <div class="panel panel-analytic" data-ng-controller="BrowserDetailsController">
+                    <div class="panel-heading">
+                        <i class="fa fa-globe"></i>
+                        <span>Browsers Traffic</span>
+                        <span class="pull-right panel-head-border" data-ng-click="getBrowsersList()">
+                            <i class="fa fa-refresh"></i>
+                        </span>
+                    </div>
+                    <div class="panel-body panel-body-analytic">
+                        <!--table-directive-->
+                        <table-panel-directive data-ng-if="browserLength"></table-panel-directive>
+                        <p data-ng-if="!browserLength" class="table-info">No browsers data found</p>
+                         <!--table-panel-directive-->  
+                    </div>
+                    <loading-overlay-directive></loading-overlay-directive>                    
+                </div>  <!-- Table1 ends here -->    
+                <!-- Table2 starts from here -->
+                <div class="panel panel-analytic" data-ng-controller="LocationDetailsController">
+                    <div class="panel-heading">
+                        <i class="fa fa-globe"></i>
+                        <span>Location Traffic</span>
+                        <span class="pull-right panel-head-border" data-ng-click="getLocationsList()">
+                            <i class="fa fa-refresh"></i>
+                        </span>
+                    </div>
+                    <div class="panel-body panel-body-analytic">
+                        <table-panel-directive data-ng-if="locationLength"></table-panel-directive>
+                        <p data-ng-if="!locationLength" class="table-info">No locations data found</p>
+                    </div>
+                     <loading-overlay-directive></loading-overlay-directive>                    
+                </div> <!-- Table2 ends here --> 
+                <!-- Table3 starts from here -->                      
+                <div class="panel panel-analytic" data-ng-controller="PlatformDetailsController">
+                    <div class="panel-heading">
+                        <i class="fa fa-globe"></i>
+                        <span>Operating System Traffic</span>
+                        <span class="pull-right panel-head-border" data-ng-click="getPlatformsList()">
+                            <i class="fa fa-refresh"></i>
+                        </span>
+                    </div>
+                    <div class="panel-body panel-body-analytic">
+                        <table-panel-directive data-ng-if="platformLength"></table-panel-directive>
+                        <p data-ng-if="!platformLength" class="table-info">No platforms data found</p>
+                    </div>
+                    <loading-overlay-directive></loading-overlay-directive>                  
+                </div>  <!-- Table3 ends here -->                                                     
+            </div> <!-- Column1 ends here -->                                                           
+
+            <!-- Column2 starts from here -->
+            <div class="col-md-4">
+                <!-- Pie chart starts from here -->
+                <pie-chart-directive data-ng-controller="VisitorDetailsController"></pie-chart-directive>
+                 <!-- Pie chart ends here -->
+            </div> <!-- Column2 ends here -->                           
+        </div> <!-- Graph  column1 ends here -->
+    </div> <!-- Starts content ends here -->
+</div>

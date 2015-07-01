@@ -1,0 +1,85 @@
+.heading
+{
+  font-size: 24px;
+  font-weight: bold;
+  color:#606060 ;
+}
+.wrapper
+{
+  background-color: white;
+}
+.wrapper > tbody > tr:hover{
+  cursor: pointer;
+}
+#chatbox {
+  text-align:left;
+  /*margin-left: 25px;*/
+  margin-bottom:25px;
+  padding:10px;
+  background:#fff;
+  min-height:370px;
+  /*width:630px;*/
+  border:1px solid #ccc;
+  overflow:auto;
+}
+
+#usermsg {
+    width:395px;
+    border:1px solid #ACD8F0;
+  }
+
+#submit { width: 60px; }
+
+#welcome { float:left;}
+#mail{
+    margin-left: 50px;
+}
+#mesg
+{
+    width:75%;
+}
+.mymodal{
+    border-radius:0px;
+}
+.remove{
+    border-radius: 10px;
+}
+.bg-icon{
+    background:url("../images/browsers.png") ;
+    background-repeat: no-repeat;
+    width: 15px;
+    height:15px;
+    display: inline-block;
+    opacity: 0.8;
+    margin-left: 30px;
+
+}
+.os-icon{
+    background:url("../images/os.png") ;
+    background-repeat: no-repeat;
+    width: 14px;
+    height:15px;
+    display: inline-block;
+    /*opacity: 0.8;
+    background-size:contain;*/
+    margin-left: 45px;
+    }
+.flag-icon{
+    background: url("../images/f3.png");
+  background-repeat: no-repeat;
+  width: 25px;
+  height: 15px;
+  display: inline-block;
+  margin-left: 15px;
+}
+#visitorModal{
+  margin-top: 40px;
+}
+
+@media (min-width: 768px){
+
+  .modal-dialog {
+    width: 1000px;
+    /*margin: 30px auto;*/
+  }
+}

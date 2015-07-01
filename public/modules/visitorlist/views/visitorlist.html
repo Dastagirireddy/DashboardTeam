@@ -1,0 +1,77 @@
+<div>
+    <!-- Breadcumb starts here -->
+    <dashboard-breadcumb data-breadcumb="Visitor list"></dashboard-breadcumb>
+    <!-- Breadcumb ends here -->
+    <!-- Dashboard header starts here -->
+    <dashboard-title data-mytitle="Visitor list"></dashboard-title>
+    <!-- Dashboard ends here -->
+    <!-- Graphs content starts here -->
+    <div class="graph-wrapper graph-wrapper-white" data-ng-controller="LiveVisitorController">
+    	<div class="dynamictable"> <!-- division of table starts here-->
+        <p class="heading">ActiveVisitors</p>
+        <table class="table table-striped wrapper">
+        <tr>
+            <th>SocketID</th>
+            <th>Browser</th>
+            <th>OS</th>
+            <th>Location</th>
+            <th>Pages</th>
+        </tr>
+          <tr ng-repeat="visitor in liveVisitor" data-toggle="modal" data-target="#visitorModal" ng-click="showDetails(visitor)" ng-class="{selected: $index === selectedRow}">
+            <td>#{{ visitor.socketId }}</td>
+            <td><span class="bg-icon" data-ng-style="getBrowser(visitor.browser.name)"></span></td>
+            <td><span class="os-icon" data-ng-style="getOs(visitor.platform.os)"></span></td>
+            <td><span class="flag-icon" data-ng-style="getFlag(visitor.locaton.city)"></span></td>
+            <td><span class="badge bg-danger bounceIn animation-delay6">{{ visitor.pages.length }}</span> <span data-ng-repeat="item in visitor.pages"><span data-ng-if="$last">{{ item }}</span></span></td>
+          </tr>
+        </table>
+    </div> <!-- division of table ends here-->
+    <div id="details">
+    <!--modal display-->
+
+     <div class="modal fade" id="visitorModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <span class="pull-right badge bg-success bounceIn animation-delay6">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </span>
+                      <h4 class="modal-title">Analytics Dashboard ChatBox</h4>
+                  </div>
+                  <div class="modal-body">
+                      <div class="row container">
+                        <p id="welcome">Welcome ....</p>
+                      </div>
+                      <div class="row">
+                          <div class="col-md-9">
+                              <div id="chatbox">
+                                <p ng-repeat="message in messages">{{ message.message }}</p>
+                              </div>
+                          </div>
+                          <div class="col-md-3">
+                            <h3>List Of Visited Sites</h3>
+                            <ul>
+                              <li data-ng-repeat="page in visitorPages">{{ page }}</li>
+                            </ul>
+                          </div>
+                      </div>
+                  <div class="row">
+                      <div class="col-md-1">
+                          <img src="/modules/visitorlist/images/user.png"/>
+                      </div>
+                      <div class="col-md-8">
+                          <div class="input-group m-bottom-md">
+                              <input type="text" class="form-control" data-ng-model="message" />
+                              <span class="input-group-btn">
+                              <button class="btn btn-success" type="button" data-ng-click="sendMessage(visitorId)">Send</button>
+                              </span>
+                          </div>
+                      </div>
+                  </div>
+                  </div>
+              </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
+    </div>
+</div>

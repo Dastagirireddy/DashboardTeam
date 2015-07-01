@@ -1,0 +1,17 @@
+.tab-content{
+
+    margin-top: 10px;
+}
+.col-md-2
+{
+	background-color: #ccc;
+}
+.socialicons ul li{
+	list-style: none;
+	float:left;
+}
+.socialicons ul{
+
+	padding-left: 0px;
+}
+

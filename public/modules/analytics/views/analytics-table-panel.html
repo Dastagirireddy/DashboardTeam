@@ -1,0 +1,23 @@
+<table class="table table-striped ci-table">
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Progress</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-ng-repeat="(key,value) in pcount">
+            <td>{{key}}</td>
+            <td>
+                <div class="progress progress-striped active" style="height:8px; margin:5px 0 0 0;">
+                    <div class="progress-bar"  
+                    ng-class="changeBgPanel({{ value }})"  
+                    ng-style="{'width':value +'%'}">
+                    </div>
+                </div>
+            </td>
+            <td>{{value}} %</td>
+        </tr>
+    </tbody>
+</table>

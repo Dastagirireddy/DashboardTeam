@@ -1,0 +1,98 @@
+<div data-ng-controller="OverviewController">
+    <!-- Breadcumb starts here -->
+    <dashboard-breadcumb data-breadcumb="Overview"></dashboard-breadcumb>
+    <!-- Breadcumb ends here -->
+    <!-- Dashboard header starts here -->
+    <dashboard-title data-mytitle="Overview"></dashboard-title>
+    <!-- Dashboard ends here -->
+    <!-- Graphs content starts here -->
+    <div class="graph-wrapper graph-wrapper-white">
+        <div class="row">
+            <div class="col-md-8">
+                <h4 class="overview-h4">Welcome to Analytics Dashboard</h4>
+                <small>Engage your website visitors instantly with Analytics Live Chat!</small>
+                <div class="products">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="product-list">
+                                Dashboard
+                                <small class="small-block">An overview of what's happening on your website</small>
+                                <div class="product-icon bg-success">
+                                    <i class="fa fa-desktop fa-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="product-list">
+                                Analytics
+                                <small class="small-block">See a list of all your website metrics in graphical manner</small>
+                                <div class="product-icon bg-success">
+                                    <i class="fa fa-bar-chart fa-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="product-list">
+                                Visitors List
+                                <small class="small-block">See a list of your web visitors and chat with them</small>
+                                <div class="product-icon bg-success">
+                                    <i class="fa fa-list-alt fa-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="product-list">
+                                Chat History
+                                <small class="small-block">See a list of previous chat history</small>
+                                <div class="product-icon bg-success">
+                                    <i class="fa fa-envelope fa-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="overview">
+                    <article>
+                        <p>
+                            Thank you very much for registering with CI Analytics. We are excited
+                            you choose our product to know metrics of your site.
+                        </p>
+                        <p>
+                            In order to use our service, please make sure that you have already  configured the plugin properly.
+                            In order to do so, just copy the below generated Script code and pase it in head section of your web pages.
+                            These include product registration number. Finally, do not make any changes in the script code. Otherwise the plugin will not work properly.
+                        </p>
+                        <p>
+                            Optimize your site based on read data.
+                        </p>
+                    </article>
+                    <!-- window.onload=function(){var o=io.connect("http://{{ overview.host }}",{query: "webId={{ overview.webId }}"});o.on("socketId",function(o){document.cookie="socket_state="+o,console.log(o)})}; -->
+                    <div class="script-api bg-info">Script API widget</div>
+                    <div class="overview-script">
+                        <pre>
+                        <code>
+&lt;script&gt;
+(function(){var e=document.createElement("script");e.src="http://10.241.204.9:3000/dashboard.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t);var d=document.createElement("input");d.setAttribute("id","dashboard"),d.type="hidden",d.value="{{ overview.webId }}",document.body.appendChild(d)}());window.onload=function(){window.Validator()};
+&lt;/script&gt;
+
+                        </code>
+                        </pre>
+                        <div class="copy-script">copy</div>
+                    </div>
+                    <div><strong>Important!</strong> Please kept this script head section of your web pages</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <img src="/modules/overview/images/overview-report.png" class="overview-img" /> 
+                <h1 style="text-align:center">Know your website Metrics</h1>
+                <ul>
+                    <li>Line graph - No.of page views</li>
+                    <li>Pie chart - No.of visitors</li>
+                    <li>Grid - Today's metrics</li>
+                    <li>Tables - Browser, location and Os metrics</li>
+                </ul>
+                <!-- <img src="http://e27.co/wp-content/uploads/2015/01/appsflyer-header.png"> -->
+            </div>
+        </div>
+    </div> <!-- Starts content ends here -->
+</div>

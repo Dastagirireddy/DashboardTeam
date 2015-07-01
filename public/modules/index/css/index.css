@@ -1,0 +1,175 @@
+  body{
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    
+  }
+  .ci-index{
+    padding-top: 50px;
+  }
+  .navbar 
+  {
+   background: white;
+   border-bottom: none;
+   margin-bottom: 0;
+  }
+  .navbar-nav li a{
+    color: #495B6C;
+  }
+  .adp-row{
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  .adp-content
+  {
+     float:none;
+     text-align: center;
+     display: inline-block;
+  }
+  .navbar-brand{
+    color: #495B6C;
+    font-size: 22px;
+  }
+  .icon-bar{
+      //background-color: white;
+      background-color: #495B6C;
+  }
+  .navbar-toggle{
+      //background-color: #495B6C;
+  }
+  .adp-h3{
+    text-align: center;
+  }
+  h1{
+    font-size: 28px;
+  }
+  h3{
+    display: inline-block;
+  }
+  .adp-copyright{
+    text-align: center;
+  }
+  .index-navbar-toggle:hover{
+    background-color: #EEEEEE;
+  }
+  .adp-image{
+    width: 100%;
+    height: auto;
+  }
+  .adp-img-height{
+    height: 180px;
+  }
+  .adp-about{
+    text-align: center;
+    background: #339999;
+    color: #495B6C;
+    font-size: 23px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .abt_image
+  {
+    width:400px;
+    height:250px;
+
+  }
+  .col-lg-7
+  {
+    font-size: 20px;
+  }
+  .about{
+    padding-top: 15px;
+    padding-bottom: 15px;
+    text-align: justify;
+  }
+  .ada-about-remove-right{
+    padding-right: 0;
+    padding-left: 0;
+  }
+  .abt-content
+  {
+    background: #f9f9f9;
+    padding:30px 0px 30px 0px;
+    margin-bottom: 40px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .adp-head
+  {
+    margin-bottom: 0px;
+    margin-top: 0;
+    /*-webkit-box-shadow: inset 3px -7px 43px 0px rgba(249,249,249,1);
+    -moz-box-shadow: inset 3px -7px 43px 0px rgba(249,249,249,1);
+    box-shadow: inset 3px -7px 43px 0px rgba(249,249,249,1);*/
+    color:#ffffff;
+  }
+  .adp-grid-content{
+    background-color: #f9f9f9;
+  }
+
+  /*********************************** Login Form modal CSS ******************************************/
+
+.modal{
+  /*display: block;*/
+  display: none;
+  background-color:rgba(0,0,0,0.5);
+}
+.analytics-modal-dialog
+{
+  width:90%;
+  /*margin: 50px auto;*/
+  /*margin: 3% auto;*/
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+@media (min-width: 768px){
+  .analytics-modal-dialog{
+    width: 38%;
+  }
+}
+a{
+  cursor: pointer;
+}
+
+.ada-cursor{
+  cursor: pointer;
+}
+
+/* Banner CSS */
+.adp-banner{
+  background-image: url('../images/banner4.jpg');
+}
+.ada-banner-carousel{
+  height: 530px;
+}
+.ada-banner-padding{
+  padding: 30px 0 30px 0;
+}
+.carousel-control.left, .carousel-control.right{
+  background-image: none;
+}
+.carousel-inner > .item > img, .carousel-inner > .item > a > img {
+    width: 70%;
+    margin: auto;
+    height: 440px;
+}
+@media only(min-width: 768px){
+  .adp-banner{
+    height: 500px;
+  }
+}
+
+
+/* coding started changes in CSS */
+.ada-login, .ada-signup{
+  display: none;
+}
+.modal-display{
+  display: block;
+}
+/*form validations*/
+/*input.ng-dirty.ng-valid{
+  border:1px solid red;
+}*/

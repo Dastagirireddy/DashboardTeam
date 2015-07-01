@@ -1,0 +1,932 @@
+// Loading npm modules
+var express = require('express'),
+	bodyParser = require('body-parser'),
+	clientSessions = require('client-sessions'),
+	http = require('http'),
+	io = require('socket.io'),
+	cookie = require('cookie'),
+	fs = require('fs'),
+	useragent = require('express-useragent'),
+	db = require('./api/config/database-schema.js');
+
+// Creating app
+var app = express();
+
+// Creating server for socketio
+http = http.Server(app);
+io = io(http);
+
+// Routes setup
+var routes = {};
+routes.account = require('./api/routes/account.js');
+routes.service = require('./api/services/socket-services.js');
+routes.clients = require('./api/routes/client-details.js');
+
+// App level configurations
+app.set('port', process.env.PORT || 3000); // Setting port
+app.use(express.static(__dirname + '/public')); // Loading static like html, css, images, js etc,.
+app.use(bodyParser.json()); // Collection JSON data from form, Ajax request,etc,..
+app.use(clientSessions({
+	secret: 'myserver'  // Client sessions will create session for every login user
+}));
+
+// Creating app running port
+http.listen(app.get('port'), function(){
+	console.log("Hurry Your app is running on PORT "+app.get('port'));
+});
+
+// Routes and API calls defining here 
+app.post('/register', routes.account.register);
+
+app.post('/login', routes.account.login);
+
+app.get('/logout', routes.account.logout);
+
+// Getting connected clients details
+app.get('/getClientDetails/:id', routes.clients.getClientDetails);
+app.get('/getBrowserDetails/:id', routes.clients.getBrowserDetails);
+app.get('/getPlatformDetails/:id', routes.clients.getPlatformDetails);
+app.get('/getLocationDetails/:id', routes.clients.getLocationDetails);
+
+// socket map
+var socketMap = {};
+
+// Socket connection establishing here
+io.on('connection', function(client){
+
+	// try{
+
+		console.log("Client connected");
+
+		/*
+		* Verifying whether the user has got paritcular socketID or not in the cookie
+		* If the ID exists in the cookie with name "scoket_state" we will go ahead with further steps otherwise,
+		* Else generate one random ID and assign it to the "cliet.id" and store it in the cookies
+		* And push that ID into the database of particular registered website user "people" Array
+		* Whenever user disconnected form the socket connection, then we will remove the user form the "people" Array
+		*/
+		var cookies = cookie.parse(client.handshake.headers.cookie);
+		console.log(cookies);
+		if(client.handshake.query.hasOwnProperty('webId')){
+
+			if(!cookies.hasOwnProperty("socket_state")){
+				
+				var socketId = Math.floor(Math.random() * 1000000);
+				client.id = socketId;
+				client.room = client.handshake.query["webId"];
+				socketMap[client.id] = {
+					counter: 0
+				};
+				socketMap[client.id]["counter"] = 1;
+			}			
+		}
+
+		else if(cookies.hasOwnProperty('socket_state')){
+
+			if(client.handshake.query.hasOwnProperty('webId')){
+				
+				client.id = cookies["socket_state"];
+				client.room = client.handshake.query["webId"];
+				client.join(client.room);
+				if(socketMap[client.id] === undefined){
+					
+					socketMap[client.id] = {
+						counter: 0
+					};
+				}
+				socketMap[client.id]["counter"] = socketMap[client.id]["counter"] + 1;				
+			}
+			else{
+				console.log("I am calling Parser Cookie");
+				client.id = routes.service.parseRegId(cookies["regId"]);
+				client.room = client.id;
+				client.join(client.id);
+			}
+		}
+		else {
+			console.log("I am calling Parser Cookie");
+			client.id = routes.service.parseRegId(cookies['regId']);
+			client.room = client.id;
+			client.join(client.id);
+			console.log("A new registered user connected to our socket server");
+		}
+
+		// Storing Anynomous user into registered user room "people" Array
+		console.log(client.handshake.query.hasOwnProperty('webId'));
+		if(client.handshake.query.hasOwnProperty('webId')){
+			db.userSocketRoomModel.findOne({roomName: client.handshake.query.webId}, function(error, success){
+				if(success){
+					client.join(success.roomName);
+					if(success.people.indexOf(client.id) <= -1){
+						success.people.push(client.id);
+						success.save(function(e, s){
+							if(s){
+								//console.log(s);
+							}
+							else{
+								console.log(e);
+							}
+						});				
+					}
+					client.emit('socketId', client.id);
+				}
+				else{
+					console.log(error);
+				}
+			});
+		}
+
+		/* 
+		* Collecting connected user details 
+		* Browser name and version
+		* Location name
+		* Visited pages in the Website
+		* 
+		*/
+		var source = client.handshake.headers["user-agent"];
+		console.log("-----");
+		//console.log(source);
+		var ua = useragent.parse(source);
+		//console.log(routes.service.getClientDetails(ua));
+		// console.log(ua);	
+		var roomName = client.handshake.query["webId"];
+		//routes.service.setBrowserCount(ua, roomName);
+		//console.log(client.handshake);
+		console.log("My socket Room name:::" + roomName);
+
+		// Storing client commplete details in the database
+		if(socketMap.hasOwnProperty(client.id)){
+			if(socketMap[client.id]["counter"] == 1){
+				
+				var clientInfo = routes.service.getClientDetails(ua, roomName, client);
+				console.log("<<<<<<<<<<<<-------------------- Engine starts here ------------------>>>>>>>>")
+				//console.log(clientInfo);
+				var ClientInfo = new db.clientInfoModel();
+				ClientInfo.roomName = clientInfo.roomName;
+				ClientInfo.socketId = clientInfo.socketId;
+				// ClientInfo.browser = clientInfo.browser;
+				// ClientInfo.location = clientInfo.location;
+				// ClientInfo.platform = clientInfo.platform;
+				ClientInfo.pages.push(clientInfo.page);
+				ClientInfo.status = clientInfo.status;
+				ClientInfo.created_at = clientInfo.created_At;
+
+				ClientInfo.save(function(e1, s1){
+					if(s1){
+						//console.log(s1);
+						var Browser = new db.browserModel();
+						Browser.roomName = clientInfo.roomName;
+						Browser.name = clientInfo.browser.name;
+						Browser.version = clientInfo.browser.version;
+						Browser.time = s1.created_at;
+						Browser.save(function(e2, s2){
+
+							if(s2){
+								//console.log(s2);
+								var Location = new db.locationModel();
+								Location.roomName = clientInfo.roomName;
+								Location.city = clientInfo.location.city;
+								Location.state = clientInfo.location.state;
+								Location.country = clientInfo.location.country;
+								Location.time = s2.time;
+								Location.save(function(e3, s3){
+									if(s3){
+										//console.log(s3);
+										var Platform = new db.platformModel();
+										Platform.roomName = clientInfo.roomName;
+										Platform.name = clientInfo.platform.name;
+										Platform.os = clientInfo.platform.os;
+										Platform.isMobile = clientInfo.platform.isMobile;
+										Platform.isDesktop = clientInfo.platform.isDesktop;
+										Platform.save(function(e4, s4){
+											if(s4){
+												console.log("Final entry in the databse of clientInfo details");
+												//console.log(s4);
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+					else{
+						console.log(e1);
+					}
+				});
+			}			
+		}
+		console.log(client.room);
+		io.sockets.in(client.room).emit('clients', client.id + "  has been connected to your server");
+		/*
+		* Whenever client goes offlin we should remove the ID from the online people 
+		*/
+
+		client.on('disconnect', function(){
+
+			if(socketMap.hasOwnProperty(client.id)){
+				socketMap[client.id]["counter"] -= 1;
+
+				if(socketMap[client.id]["counter"] == 0){
+					delete socketMap[client.id];
+					console.log(client.id + " has been disconnected from the server");
+					db.userSocketRoomModel.findOne({roomName: client.handshake.query.webId}, function(error, success){
+						
+						if(success){
+
+							var client_index = success.people.indexOf(client.id);
+							if(client_index > -1){
+
+								var people = routes.service.popArrayElement(success.people, client_index);
+								success.people = people;
+								success.save(function(e, s){
+
+									if(s){
+										console.log(s);
+										db.clientInfoModel.update({roomName: roomName, socketId: client.id, status: true}, {'$set':{'status': false}}, function(err, succ){
+											
+											console.log(succ);
+											
+										});									
+									}
+									else{
+										console.log(e);
+									}
+								});
+							}
+						}
+					});
+				}
+				else{
+					console.log("User decremented");
+				}			
+			}
+
+		});
+	// }
+	// catch(exp){
+	// 	console.log("Error occured please try again");
+	// }
+	
+});
+
+**************************************************************************************************************************
+// Loading npm modules
+var express = require('express'),
+	bodyParser = require('body-parser'),
+	clientSessions = require('client-sessions'),
+	http = require('http'),
+	io = require('socket.io'),
+	cookie = require('cookie'),
+	fs = require('fs'),
+	useragent = require('express-useragent'),
+	db = require('./api/config/database-schema.js');
+
+// Creating app
+var app = express();
+
+// Creating server for socketio
+http = http.Server(app);
+io = io(http);
+
+// Routes setup
+var routes = {};
+routes.account = require('./api/routes/account.js');
+routes.service = require('./api/services/socket-services.js');
+routes.clients = require('./api/routes/client-details.js');
+
+// App level configurations
+app.set('port', process.env.PORT || 3000); // Setting port
+app.use(express.static(__dirname + '/public')); // Loading static like html, css, images, js etc,.
+app.use(bodyParser.json()); // Collection JSON data from form, Ajax request,etc,..
+app.use(clientSessions({
+	secret: 'myserver'  // Client sessions will create session for every login user
+}));
+
+// Creating app running port
+http.listen(app.get('port'), function(){
+	console.log("Hurry Your app is running on PORT "+app.get('port'));
+});
+
+// Routes and API calls defining here 
+app.post('/register', routes.account.register);
+
+app.post('/login', routes.account.login);
+
+app.get('/logout', routes.account.logout);
+
+// collecting User details for Overview page
+app.get('/getUserDetails', routes.account.getUserDetails);
+
+// Setting cross origin allow requests
+app.all('/', function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	next();
+ });
+
+// Getting connected clients details
+app.get('/getClientDetails/:id', routes.clients.getClientDetails);
+app.get('/getBrowserDetails/:id', routes.clients.getBrowserDetails);
+app.get('/getPlatformDetails/:id', routes.clients.getPlatformDetails);
+app.get('/getLocationDetails/:id', routes.clients.getLocationDetails);
+
+// collecting sockets clients data
+app.get('/getSocketClientsData/:id', routes.clients.getSocketClientsData);
+
+// Collecting live visitors list
+app.get('getLiveVisitorList', routes.clients.getLiveVisitorList);
+
+// socket map
+var socketMap = {};
+
+// Socket connection establishing here
+io.sockets.on('connection', function(client){
+
+	client.on('live', function(data){
+
+		console.log("I am data from live event "+data);
+	});
+	try{
+
+		var cookies,
+			roomName,
+			socketId;
+		try{
+			cookies = cookie.parse(client.handshake.headers.cookie);
+		}catch(exp){
+
+			console.log(" I am not able to parse the cookie values,..");
+			console.log(exp);
+		}		
+		/*
+		* If webId property exists in the client request info then he / she accessed from the registered website
+		* Else he /she belongs analytics dashboard registered user
+		*/
+		if(client.handshake.query.hasOwnProperty('webId')){
+
+			console.log("I am in Anonymous User Id block,....");
+			roomName = client.handshake.query["webId"];
+
+			// Collecting cookies from request	
+
+
+			/*
+			* Verifying "socket_state" exists or not
+			* If exists assign it to the client ID 
+			* else generate some random number and assign it to the socket_state as well as client Id
+			*/
+			var socketId;
+			if(!cookies.hasOwnProperty("socket_state")){
+				
+				socketId = Math.floor(Math.random() * 1000000);
+				client.room = roomName;
+				client.join(roomName);
+
+				if(!socketMap.hasOwnProperty(socketId)){
+
+					socketMap[socketId] = [];
+					socketMap[socketId].push(client.id);					
+				}
+				client.emit('socketId', socketId);
+			}
+			else{
+
+				client.room = roomName;
+				client.join(roomName);
+
+				socketId = cookies["socket_state"];
+				if(!socketMap.hasOwnProperty(socketId)){
+					
+					if(Array.isArray(socketMap[socketId])){
+
+						socketMap[socketId].push(client.id);
+					}
+					else{
+
+						socketMap[socketId] = [];
+						socketMap[socketId].push(client.id);
+					}
+				}
+				else{
+
+					socketMap[socketId].push(client.id);
+				}				
+			}
+
+			if(socketMap.hasOwnProperty(socketId)){
+
+				var source = client.handshake.headers["user-agent"];
+				var ua = useragent.parse(source);
+
+				if(socketMap[socketId].indexOf(client.id) > -1){
+
+					var clientInfo = routes.service.getClientDetails(ua, roomName, socketId, client);
+					console.log("<<<<<<<<<<<<-------------------- Engine starts here ------------------>>>>>>>>");
+					var ClientInfo = new db.clientInfoModel();
+					ClientInfo.roomName = clientInfo.roomName;
+					ClientInfo.socketId = clientInfo.socketId;
+					ClientInfo.pages.push(clientInfo.page);
+					ClientInfo.status = clientInfo.status;
+					ClientInfo.created_at = clientInfo.created_At;
+
+					ClientInfo.save(function(e1, s1){
+						if(s1){
+							//console.log(s1);
+							var Browser = new db.browserModel();
+							Browser.roomName = clientInfo.roomName;
+							Browser.socketId = s1._id;
+							Browser.name = clientInfo.browser.name;
+							Browser.version = clientInfo.browser.version;
+							Browser.time = s1.created_at;
+							Browser.save(function(e2, s2){
+
+								if(s2){
+									//console.log(s2);
+									var Location = new db.locationModel();
+									Location.roomName = clientInfo.roomName;
+									Location.socketId = s1._id;
+									Location.city = clientInfo.location.city;
+									Location.state = clientInfo.location.state;
+									Location.country = clientInfo.location.country;
+									Location.time = s2.time;
+									Location.save(function(e3, s3){
+										if(s3){
+											//console.log(s3);
+											var Platform = new db.platformModel();
+											Platform.roomName = clientInfo.roomName;
+											Platform.socketId = s1._id;
+											Platform.name = clientInfo.platform.name;
+											Platform.os = clientInfo.platform.os;
+											Platform.isMobile = clientInfo.platform.isMobile;
+											Platform.isDesktop = clientInfo.platform.isDesktop;
+											Platform.save(function(e4, s4){
+												if(s4){
+													console.log("Final entry in the databse of clientInfo details");
+													//console.log(s4);
+													
+													// Retrieve today's complete data from the Database
+													routes.service.clientSocketData(roomName, io, client);
+
+													// Retrieve today's complete visitor list from the database
+													routes.service.getLiveVisitorList(roomName, io, client);													
+												}
+											});
+										}
+									});
+								}
+							});
+						}
+						else{
+							console.log(e1);
+						}
+					});					
+				}
+
+				/*
+				* Storing connected clients to the particulr registered website userId
+				* online users people list
+				* If already exists leave it as it is.
+				*/
+				if(typeof roomName !== undefined){
+
+					db.userSocketRoomModel.findOne({roomName: roomName}, function(error, success){
+						
+						if(success){
+							
+							if(success.people.indexOf(socketId) <= -1){
+
+								success.people.push(socketId);
+								success.save(function(e, s){
+									
+									if(s){
+										console.log("Adding to the online list successfully completed,..");
+									}
+									else{
+										console.log(e);
+									}
+								});				
+							}
+						}
+						else{
+
+							console.log(error);
+						}
+					});			
+				}				
+			}
+		}
+		else{
+			
+			console.log("I am calling Parser RegId method for getting registered user id ");
+			if(cookies.hasOwnProperty("regId")){
+
+				socketId = routes.service.parseRegId(cookies["regId"]);
+				roomName = socketId;
+				if(!socketMap.hasOwnProperty(socketId)){
+					
+					if(Array.isArray(socketMap[socketId])){
+
+						socketMap[socketId].push(client.id);
+					}
+					else{
+
+						socketMap[socketId] = [];
+						socketMap[socketId].push(client.id);
+					}
+				}
+				else{
+
+					socketMap[socketId].push(client.id);
+				}			
+				client.room = socketId;
+				client.join(client.room);				
+			}
+		}
+
+		console.log("#####################################");
+		io.sockets.in(client.room).emit('message', client.id + " has been connected to socket server room " + client.room );
+		
+		// Retrieve today's complete data from the Database
+		routes.service.clientSocketData(roomName, io, client);
+
+		// Retrieve today's complete visitor list from the database
+		routes.service.getLiveVisitorList(roomName, io, client);
+		
+		client.on('disconnect', function(){
+
+			console.log(socketMap);
+			console.log(socketId);
+			if(socketMap.hasOwnProperty(socketId)){
+
+				var arr = socketMap[socketId];
+				var pos = arr.indexOf(client.id);
+				var result = routes.service.popArrayElement(arr, pos);
+				socketMap[socketId] = result;
+				console.log("------------------");
+				console.log(socketMap);
+				
+				if(socketMap[socketId].length == 0){
+
+					db.userSocketRoomModel.findOne({roomName: client.handshake.query.webId}, function(error, success){
+						
+						if(success){
+
+							var client_index = success.people.indexOf(socketId);
+							if(client_index > -1){
+
+								var people = routes.service.popArrayElement(success.people, client_index);
+								success.people = people;
+								success.save(function(e, s){
+
+									if(s){
+										//console.log(s);
+										db.clientInfoModel.update({roomName: roomName, socketId: socketId, status: true}, {'$set':{'status': false}}, function(err, succ){
+											
+											console.log(succ);
+											if(succ){
+
+												routes.service.clientSocketData(roomName, io, client);
+											
+												// Retrieve today's complete visitor list from the database
+												routes.service.getLiveVisitorList(roomName, io, client);
+											}
+											else{
+												console.log("Failed to update the user status,...");
+											}
+										});									
+									}
+									else{
+										console.log(e);
+									}
+								});
+							}
+						}
+					});	
+					delete socketMap[socketId];
+				}
+			}
+			console.log(client.id + " has been disconnected from the socket server room " + client.room);
+			io.sockets.in(client.room).emit("message", client.id + " has been disconnected from the socket server room " + client.room);
+						
+		});
+	}catch(exp){
+		console.log(exp);
+	}	
+
+});
+
+
+
+
+
+
+
+
+
+
+
+/******* Third version ***********/
+
+// exports.dashboardIO = function(io, client, db, routes){
+
+// 	client.on('live', function(data){
+
+// 		console.log("I am data from live event "+data);
+// 	});
+// 	try{
+
+// 		var cookies,
+// 			roomName,
+// 			socketId;
+// 		try{
+// 			cookies = cookie.parse(client.handshake.headers.cookie);
+// 		}catch(exp){
+
+// 			console.log(" I am not able to parse the cookie values,..");
+// 			console.log(exp);
+// 		}		
+// 		/*
+// 		* If webId property exists in the client request info then he / she accessed from the registered website
+// 		* Else he /she belongs analytics dashboard registered user
+// 		*/
+// 		if(client.handshake.query.hasOwnProperty('webId')){
+
+// 			console.log("I am in Anonymous User Id block,....");
+// 			roomName = client.handshake.query["webId"];
+
+// 			// Collecting cookies from request	
+
+
+// 			/*
+// 			* Verifying "socket_state" exists or not
+// 			* If exists assign it to the client ID 
+// 			* else generate some random number and assign it to the socket_state as well as client Id
+// 			*/
+// 			var socketId;
+// 			if(!cookies.hasOwnProperty("socket_state")){
+				
+// 				socketId = Math.floor(Math.random() * 1000000);
+// 				client.room = roomName;
+// 				client.join(roomName);
+// 				console.log("I don't have socket_state property,...");
+// 				if(!socketMap.hasOwnProperty(socketId)){
+
+// 					// socketMap[socketId] = [];
+// 					// socketMap[socketId].push(client.id);	
+// 					console.log("I don't have socketMap,...");	
+// 					socketMap[socketId]	= {};
+// 					socketMap[socketId]["users"] = [];
+// 					socketMap[socketId]["users"].push(client.id);
+// 					socketMap[socketId]["counter"] = 1;
+// 				}
+// 				client.emit('socketId', socketId);
+// 			}
+// 			else{
+
+// 				client.room = roomName;
+// 				client.join(roomName);
+// 				console.log("I have socket_state property,...");
+// 				socketId = cookies["socket_state"];
+// 				if(!socketMap.hasOwnProperty(socketId)){
+					
+// 					console.log("I don't have socketMap socketId,..");
+// 					//socketMap[socketId] = {};
+// 					console.log(socketMap[socketId]);
+// 					if(socketMap[socketId] && Array.isArray(socketMap[socketId]["users"])){
+
+// 						console.log("I am socketMap users Array,...");
+// 						socketMap[socketId]["counter"] += 1;	
+// 						socketMap[socketId]["users"].push(client.id);
+// 					}
+// 					else{
+
+// 						// socketMap[socketId] = [];
+// 						// socketMap[socketId].push(client.id);
+// 						console.log("I am not a socketMap users Array,....");
+// 						socketMap[socketId]	= {};
+// 						socketMap[socketId]["users"] = [];
+// 						socketMap[socketId]["users"].push(client.id);
+// 						socketMap[socketId]["counter"] = 1;						
+// 					}
+// 				}
+// 				else{
+
+// 					console.log("I already have socketMap socketId,...");
+// 					socketMap[socketId]["counter"] += 1;
+// 					socketMap[socketId]["users"].push(client.id);
+// 				}				
+// 			}
+
+// 			if(socketMap.hasOwnProperty(socketId)){
+
+// 				var source = client.handshake.headers["user-agent"];
+// 				var ua = useragent.parse(source);
+// 				console.log("I am submitting client metrics to the database server,.....");
+// 				console.log(socketMap[socketId]["counter"]);
+// 				if(socketMap[socketId]["users"].indexOf(client.id) > -1){
+
+// 					var clientInfo = routes.service.getClientDetails(ua, roomName, socketId, client);
+// 					console.log("<<<<<<<<<<<<-------------------- Engine starts here ------------------>>>>>>>>");
+// 					var ClientInfo = new db.clientInfoModel();
+// 					ClientInfo.roomName = clientInfo.roomName;
+// 					ClientInfo.socketId = clientInfo.socketId;
+// 					ClientInfo.pages.push(clientInfo.page);
+// 					ClientInfo.status = clientInfo.status;
+// 					ClientInfo.created_at = clientInfo.created_At;
+
+// 					ClientInfo.save(function(e1, s1){
+// 						if(s1){
+// 							//console.log(s1);
+// 							if(socketMap[socketId]["counter"] == 1) {
+
+// 								var Browser = new db.browserModel();
+// 								Browser.roomName = clientInfo.roomName;
+// 								Browser.socketId = s1._id;
+// 								Browser.name = clientInfo.browser.name;
+// 								Browser.version = clientInfo.browser.version;
+// 								Browser.time = s1.created_at;
+// 								Browser.save(function(e2, s2){
+
+// 									if(s2){
+// 										//console.log(s2);
+// 										var Location = new db.locationModel();
+// 										Location.roomName = clientInfo.roomName;
+// 										Location.socketId = s1._id;
+// 										Location.city = clientInfo.location.city;
+// 										Location.state = clientInfo.location.state;
+// 										Location.country = clientInfo.location.country;
+// 										Location.time = s2.time;
+// 										Location.save(function(e3, s3){
+// 											if(s3){
+// 												//console.log(s3);
+// 												var Platform = new db.platformModel();
+// 												Platform.roomName = clientInfo.roomName;
+// 												Platform.socketId = s1._id;
+// 												Platform.name = clientInfo.platform.name;
+// 												Platform.os = clientInfo.platform.os;
+// 												Platform.isMobile = clientInfo.platform.isMobile;
+// 												Platform.isDesktop = clientInfo.platform.isDesktop;
+// 												Platform.save(function(e4, s4){
+// 													if(s4){
+// 														console.log("Final entry in the databse of clientInfo details");
+// 														//console.log(s4);
+														
+// 														// Retrieve today's complete data from the Database
+// 														routes.service.clientSocketData(roomName, io, client);
+
+// 														// Retrieve today's complete visitor list from the database
+// 														routes.service.getLiveVisitorList(roomName, io, client);													
+// 													}
+// 												});
+// 											}
+// 										});
+// 									}
+// 								});
+// 							}
+// 							else {
+
+// 								// Retrieve today's complete data from the Database
+// 								routes.service.clientSocketData(roomName, io, client);
+
+// 								// Retrieve today's complete visitor list from the database
+// 								routes.service.getLiveVisitorList(roomName, io, client);
+// 							}
+// 						}
+// 						else{
+// 							console.log(e1);
+// 						}
+// 					});					
+// 				}
+
+// 				/*
+// 				* Storing connected clients to the particulr registered website userId
+// 				* online users people list
+// 				* If already exists leave it as it is.
+// 				*/
+// 				if(typeof roomName !== undefined){
+
+// 					db.userSocketRoomModel.findOne({roomName: roomName}, function(error, success){
+
+// 						if(success){
+							
+// 							if(success.people.indexOf(socketId) <= -1){
+
+// 								success.people.push(socketId);
+// 								success.save(function(e, s){
+									
+// 									if(s){
+// 										console.log("Adding to the online list successfully completed,..");
+// 									}
+// 									else{
+// 										console.log(e);
+// 									}
+// 								});				
+// 							}
+// 						}
+// 						else{
+
+// 							console.log(error);
+// 						}
+// 					});			
+// 				}				
+// 			}
+// 		}
+// 		else{
+			
+// 			console.log("I am calling Parser RegId method for getting registered user id ");
+// 			if(cookies.hasOwnProperty("regId")){
+
+// 				socketId = routes.service.parseRegId(cookies["regId"]);
+// 				roomName = socketId;
+// 				if(!socketMap.hasOwnProperty(socketId)){
+					
+// 					if(Array.isArray(socketMap[socketId])){
+
+// 						socketMap[socketId].push(client.id);
+// 					}
+// 					else{
+
+// 						socketMap[socketId] = [];
+// 						socketMap[socketId].push(client.id);
+// 					}
+// 				}
+// 				else{
+
+// 					socketMap[socketId].push(client.id);
+// 				}			
+// 				client.room = socketId;
+// 				client.join(client.room);				
+// 			}
+// 		}
+
+// 		console.log("#####################################");
+// 		io.sockets.in(client.room).emit('message', client.id + " has been connected to socket server room " + client.room );
+		
+// 		// Retrieve today's complete data from the Database
+// 		routes.service.clientSocketData(roomName, io, client);
+
+// 		// Retrieve today's complete visitor list from the database
+// 		routes.service.getLiveVisitorList(roomName, io, client);
+		
+// 		client.on('disconnect', function(){
+
+// 			console.log(socketMap);
+// 			console.log(socketId);
+// 			if(socketMap.hasOwnProperty(socketId)){
+
+// 				var arr = socketMap[socketId]["users"];
+// 				var pos = arr.indexOf(client.id);
+// 				var result = routes.service.popArrayElement(arr, pos);
+// 				socketMap[socketId]["users"] = result;
+// 				socketMap[socketId]["counter"] -= 1;
+// 				console.log("------------------");
+// 				console.log(socketMap);
+				
+// 				if(socketMap[socketId]["users"].length == 0){
+
+// 					db.userSocketRoomModel.findOne({roomName: client.handshake.query.webId}, function(error, success){
+						
+// 						if(success){
+
+// 							var client_index = success.people.indexOf(socketId);
+// 							if(client_index > -1){
+
+// 								var people = routes.service.popArrayElement(success.people, client_index);
+// 								success.people = people;
+// 								success.save(function(e, s){
+
+// 									if(s){
+// 										//console.log(s);
+// 										db.clientInfoModel.update({roomName: roomName, socketId: socketId, status: true}, {'$set':{'status': false}}, function(err, succ){
+											
+// 											console.log(succ);
+// 											if(succ){
+
+// 												routes.service.clientSocketData(roomName, io, client);
+											
+// 												// Retrieve today's complete visitor list from the database
+// 												routes.service.getLiveVisitorList(roomName, io, client);
+// 											}
+// 											else{
+// 												console.log("Failed to update the user status,...");
+// 											}
+// 										});									
+// 									}
+// 									else{
+// 										console.log(e);
+// 									}
+// 								});
+// 							}
+// 						}
+// 					});	
+// 					delete socketMap[socketId]["users"];
+// 				}
+// 			}
+// 			console.log(client.id + " has been disconnected from the socket server room " + client.room);
+// 			io.sockets.in(client.room).emit("message", client.id + " has been disconnected from the socket server room " + client.room);
+						
+// 		});
+// 	}catch(exp){
+// 		console.log(exp);
+// 	}	
+// };
