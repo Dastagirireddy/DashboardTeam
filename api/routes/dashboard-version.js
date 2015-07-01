@@ -11,6 +11,7 @@ exports.dashboardVersion = function(req, res){
 
 		var socketId = Math.floor(Math.random() * 1000000);
 		res.cookie('socket_state', socketId);
+		//console.log(req.cookies);
 	}
 	//res.write("Helloo everyone");;
 	//Loading chatbox
