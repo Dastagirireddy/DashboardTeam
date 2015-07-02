@@ -5,6 +5,7 @@ angular.module('analyticsApp')
 		factory.getClientDetails = function(id){
 
 			return $http.get('/getClientDetails/'+id).then(function(response){
+				
 				if(typeof response.data === 'object'){
 					return response.data;
 				}
@@ -18,6 +19,7 @@ angular.module('analyticsApp')
 		factory.getBrowserDetails = function(id){
 
 			return $http.get('/getBrowserDetails/' + id).then(function(response){
+
 				if(typeof response.data === 'object'){
 					return response.data;
 				}
@@ -31,6 +33,7 @@ angular.module('analyticsApp')
 		factory.getPlatformDetails = function(id){
 
 			return $http.get('/getPlatformDetails/' + id).then(function(response){
+
 				if(typeof response.data === 'object'){
 					return response.data;
 				}
@@ -44,6 +47,7 @@ angular.module('analyticsApp')
 		factory.getLocationDetails = function(id){
 
 			return $http.get('/getLocationDetails/' + id).then(function(response){
+
 				if(typeof response.data === 'object'){
 					return response.data;
 				}

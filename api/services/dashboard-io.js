@@ -254,7 +254,7 @@ exports.dashboardIO = function(io, client, db, routes){
 
 				// if(status == true){
 
-					db.chatModel.findOne({roomName: client.room, socketId: user}, { messages: { $slice: -5 } }, function(e2, s2){
+					db.chatModel.findOne({roomName: client.room, socketId: user}, function(e2, s2){
 						
 						//console.log(s2);
 						client.emit('messages', s2.messages);
@@ -288,7 +288,7 @@ exports.dashboardIO = function(io, client, db, routes){
 
 				//if(status == true){
 
-					db.chatModel.findOne({roomName: client.room, socketId: client.socketId}, { messages: { $slice: -5 } }, function(e2, s2){
+					db.chatModel.findOne({roomName: client.room, socketId: client.socketId}, function(e2, s2){
 
 						client.emit('messages', s2.messages);
 

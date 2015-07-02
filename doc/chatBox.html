@@ -136,10 +136,10 @@
 <script src="http://localhost:3000/socket.io/socket.io.js"></script>
 <script type="text/javascript">
   var o=io.connect("http://localhost:3000",{query: "webId=<%= webId %>"});
-  // o.on("socketId",function(o){
-  //   document.cookie="socket_state="+o;
-  //   console.log(o);
-  // });
+  o.on("socketId",function(o){
+    document.cookie="socket_state="+o;
+    console.log(o);
+  });
 
   o.on('messages', function(data){
     

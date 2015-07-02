@@ -6,16 +6,16 @@ exports.dashboardVersion = function(req, res){
 	console.log("I got website request,...");
 	console.log(req.params.id);
 	var domain = req.headers.referer;
-	console.log(req.cookies);
-	if(typeof req.cookies === undefined){
+	// console.log(req.cookies);
+	// if(typeof req.cookies === undefined){
 
-		var socketId = Math.floor(Math.random() * 1000000);
-		res.cookie('socket_state', socketId);
-		//console.log(req.cookies);
-	}
+	// 	var socketId = Math.floor(Math.random() * 1000000);
+	// 	res.cookie('socket_state', socketId);
+	// 	//console.log(req.cookies);
+	// }
 	//res.write("Helloo everyone");;
 	//Loading chatbox
-	fs.readFile('doc/chatBox.html', 'utf8', function (err,data) {
+	fs.readFile('doc/chat-box.html', 'utf8', function (err,data) {
 	  if (err) {
 	    return console.log(err);
 	  }
@@ -26,4 +26,5 @@ exports.dashboardVersion = function(req, res){
 	  var template = ejs.render(data, myData);	  
 	  res.send(template);
 	});
+
 };
