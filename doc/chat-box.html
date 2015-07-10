@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style type="text/css">
+		.chatbox-wrapper{
+			width: 300px;
+			position: fixed;
+			background-color: #eee;
+			bottom: 13px;
+			right: 2px;
+			z-index: 9999;
+			border: 1px solid #e1e1e8;
+		}
+		.chatbox-header{
+			padding: 10px;
+			color: white;
+			background-color: #fc8675;
+			font-size: 18px;
+			overflow: hidden;
+			cursor: pointer;
+			cursor: hand;
+		}
+		.chatbox-toggle{
+			margin-top: 9px;
+			padding-left: 5px;
+			padding-right: 5px;
+			border: 1px solid white;
+			float: right;
+			cursor: pointer;
+		}
+		.chatbox-body{
+			height: 310px;
+			overflow-y:auto;
+			border-bottom: 1px solid #e1e1e8;
+			padding: 5px;
+		}
+		#chat-area{
+			height: 0;
+		}
+		.chat-msg-wrapper{
+			padding: 5px;
+			margin-bottom: 6px;
+			overflow: hidden;
+		}
+		.chat-msg{
+			padding: 8px 10px;
+			font-size: 14px;
+			border-radius: 3px;
+			-webkit-word-wrap: break-word;
+			-moz-word-wrap: break-word;
+			word-wrap: break-word;
+		}
+		.chat-user1{
+			float: left;
+			background-color: #d9edf7;
+			border: 1px solid #bce8f1;
+		}
+		.chat-user2{
+			float: right;
+			background-color: #fffae6;
+			border: 1px solid #ffe680;
+		}
+		#message{
+			padding: 5px;
+			outline: none !important;
+			border: none;
+			resize:none;
+			width: 97%;
+		}
+	</style>
+</head>
+<body>
+<div class="chatbox-wrapper">
+	<div class="chatbox">
+		<div class="chatbox-header" onclick="toggleChat()">
+			<span>Leave a message</span>
+			<span class="chatbox-toggle"></span>
+		</div>
+		<div id="chat-area">
+			<!-- Loading chat history here -->
+			<div class="chatbox-body" id="messages">
+																						
+			</div>
+			<div class="chatbox-footer">
+				<textarea id="message"></textarea>
+			</div>			
+		</div>
+	</div>
+</div>
+</body>
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+
+	var chatArea = document.getElementById('chat-area'),
+		isChatOpen = false,
+		message = document.getElementById('message'),
+		firstuser,
+		messages = document.getElementById('messages');
+
+	// Sockets logic implementation for chatting purpose
+	var o = io.connect("http://localhost:3000",{query: "webId=<%= webId %>"});
+
+	// Initializing cookie value Event from server
+	o.on("socketId",function(o){
+
+		document.cookie="socket_state="+o;
+		console.log(o);
+	});
+
+	// Event for loading messages every time
+	o.on('messages', function(data){
+
+		var history = '';
+
+		for(var i=0;i<data.length;i++){
+
+			if(i == 0){
+
+				firstuser = data[i]["name"];
+			}
+			if(firstuser === data[i]['name']){
+
+				data[i]["class"] = "chat-user1";
+			}
+			else{
+
+				data[i]["class"] = "chat-user2";
+			}
+		}
+		console.log(data);
+		for(var i=0;i<data.length;i++){
+
+			if(data[i]["class"] === 'chat-user1'){
+
+				history += '<div class="chat-msg-wrapper"><div class="chat-msg chat-user1">'+ data[i]["message"]+'</div></div>';
+			}
+			else{
+
+				history += '<div class="chat-msg-wrapper"><div class="chat-msg chat-user2">'+ data[i]["message"]+'</div></div>';
+			}
+		}
+		messages.innerHTML = history;
+		messages.scrollTop = messages.scrollHeight;
+	});	
+
+	// Toggle button chatbox display
+	function toggleChat () {
+		
+		if(isChatOpen){
+
+			isChatOpen = !isChatOpen;
+			chatArea.style.height = "0px";
+		}
+		else{
+
+			isChatOpen = !isChatOpen;
+			chatArea.style.height = "360px";
+		}
+	}
+
+	// Textarea on enter submit event
+	message.onkeyup = function(e){
+
+		e = e || event;
+		if (e.keyCode === 13) {
+
+			//alert(this.value);
+			o.emit('clientMsg', this.value);
+			document.getElementById('message').value = '';
+		}
+		return true;
+	};	
+
+</script>
+</html>
