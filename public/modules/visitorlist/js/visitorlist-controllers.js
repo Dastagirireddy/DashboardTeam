@@ -28,7 +28,7 @@ angular.module('visitorlistApp')
 		});
 
 		/* icons position*/
-		$scope.browsers={
+		$scope.browsers = {
 
 			"chrome": {
 			"background-position":"-2px -18px"
@@ -40,7 +40,7 @@ angular.module('visitorlistApp')
 			"background-position":"-18px -20px"
 			}
 		};
-		$scope.operatings={
+		$scope.operatings = {
 
 			"windows": {
 
@@ -59,25 +59,25 @@ angular.module('visitorlistApp')
 			}
 		};
 
-		$scope.locations={
+		$scope.locations = {
 			"India": {
 			"background-position":"-150px -93px"
 			}
 		};
 
-		$scope.getBrowser=function(b){
+		$scope.getBrowser = function(b){
 
 			return $scope.browsers[b];
 		};
-		$scope.getOs=function(o){
+		$scope.getOs = function(o){
 
 			return $scope.operatings[o];
 		};
-		$scope.getFlag=function(l){
+		$scope.getFlag = function(l){
 
 			return $scope.locations[l];
 		};
-		$scope.showDetails=function(deatils){
+		$scope.showDetails = function(deatils){
 
 				$scope.visitorPages = deatils.pages;
 				$scope.visitorId = deatils.socketId;

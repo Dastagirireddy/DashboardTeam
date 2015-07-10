@@ -83,3 +83,130 @@
     /*margin: 30px auto;*/
   }
 }
+
+
+/*****************************************************************************************************************/
+.chatbox-header{
+  background-color: #303030;
+  color: white;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.user-avatar img{
+  position: relative;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  top: 0;
+}
+.chatbox-close{
+  cursor: pointer;
+}
+.chatbox-body{
+  background-color: #eee;
+}
+.chatbox-row{
+  margin-left: 0;
+  margin-right: 0;
+}
+.chatbox-area{
+  /*height: 450px;*/
+  /*border: 1px solid rgba(0, 0, 0, 0.1);*/
+  padding: 0;
+}
+.chatbox-aside{
+  padding-right: 0;
+}
+.visitor-list{
+  padding-left: 15px;
+}
+.chat-messages{
+  height: 400px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+  background-color: white;
+  padding: 15px;
+}
+.chat-box{
+  height: 80px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background-color: white;
+  position: relative;
+}
+.chat-box textarea{
+  width: 100%;
+  border: none;
+  height: 100%;
+  resize: none;
+  outline: none;
+}
+.chat-box > textarea:focus + .chat-info{
+  display: none;
+  border: 1px solid orange;
+}
+.chat-info{
+  display: block;
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+}
+.visitor-list li{
+  word-wrap: break-word;
+}
+.message{
+  clear: both;
+}
+.chat{
+  position: relative;
+  margin-bottom: 15px;
+}
+.bubble{
+  border-radius: 4px;
+  padding: 5px 10px;
+  display: inline-block;  
+}
+.bubble1{
+  background-color: #d9edf7;
+  border: 1px solid #bce8f1;
+}
+.bubble2{
+  background-color: #fcf8e3;
+  border: 1px solid #faebcc;
+}
+.triangle{
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  display: inline-block; 
+  position: absolute;
+  top: 28%;
+}
+.triangle-blue{
+  border-right: 7px solid #bce8f1;
+  left: -13%;
+}
+.triangle-yellow{
+  border-left: 7px solid #faebcc;
+  right: -13%;
+}
+.chat-left{
+  margin-right: 10%;
+  float: left !important;
+}
+.chat-right{
+  margin-left: 10%;
+  float: right !important;
+}
+@media (min-width: 992px){
+  .chatbox-lg{
+    width: 1100px;
+  }
+}
+@media (max-width: 991px) {
+  .chatbox-aside{
+    padding-left: 0;
+    margin-top: 15px;
+  }
+}

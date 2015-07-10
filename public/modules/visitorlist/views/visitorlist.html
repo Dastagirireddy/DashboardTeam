@@ -28,54 +28,69 @@
     </div> <!-- division of table ends here-->
     <div id="details">
     <!--modal display-->
-
-     <div class="modal fade" id="visitorModal" tabindex="-1" role="dialog">
-          <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                      <span class="pull-right badge bg-success bounceIn animation-delay6">
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    </span>
-                      <h4 class="modal-title">Analytics Dashboard ChatBox</h4>
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="visitorModal">
+      <div class="modal-dialog modal-lg chatbox-lg">
+        <div class="modal-content">
+          <div class="modal-header chatbox-header">
+            <h4 class="modal-title">
+              <span class="user-avatar"><img src="/modules/visitorlist/images/avatar.png" alt="avatar-icon" /></span>
+              <span>VISITOR 479763</span>
+              <span class="pull-right chatbox-close" data-dismiss="modal" aria-label="Close"><i class="fa fa-close"></i></span>
+            </h4>
+          </div>
+          <div class="modal-body chatbox-body">
+            <div class="row chatbox-row">
+              <div class="col-md-8 chatbox-area">
+                <!-- Chat messages list displayed here -->
+                <div class="chat-messages">
+                  <div class="message" ng-repeat="message in messages">
+                    <div class="chat chat-left">
+                      <div class="bubble bubble1">
+                        {{ message.message }}
+                      </div>
+                      <span class="triangle triangle-blue"></span>
+                    </div>
                   </div>
-                  <div class="modal-body">
-                      <div class="row container">
-                        <p id="welcome">Welcome ....</p>
+                  <!--<div class="message">
+                    <div class="chat chat-right">
+                      <div class="bubble bubble2">
+                        hiiii
                       </div>
-                      <div class="row">
-                          <div class="col-md-9">
-                              <div id="chatbox">
-                                <p ng-repeat="message in messages">{{ message.message }}</p>
-                              </div>
-                          </div>
-                          <div class="col-md-3">
-                            <h3>List Of Visited Sites</h3>
-                            <ul>
-                              <li data-ng-repeat="page in visitorPages">{{ page }}</li>
-                            </ul>
-                          </div>
-                      </div>
-                  <div class="row">
-                      <div class="col-md-1">
-                          <img src="/modules/visitorlist/images/user.png"/>
-                      </div>
-                      <div class="col-md-8">
-                          <div class="input-group m-bottom-md">
-                              <input type="text" class="form-control" data-ng-model="message" />
-                              <span class="input-group-btn">
-                              <button class="btn btn-success" type="button" data-ng-click="sendMessage(visitorId)">Send</button>
-                              </span>
-                          </div>
-                      </div>
+                      <span class="triangle triangle-yellow"></span>
+                    </div>  
+                  </div>-->
+                </div>
+                <div class="chat-box">
+                  <textarea data-ng-model="message" enter-submit></textarea>
+                  <span class="chat-info">Please enter some text to submit</span>
+                </div>
+              </div>
+              <div class="col-md-4 chatbox-aside">
+                <!-- Visitor path starts here -->
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    Visitor Path
                   </div>
+                  <div class="panel-body">
+                    <ul class="visitor-list">
+                      <li data-ng-repeat="page in visitorPages">{{ page }}</li>
+                    </ul>
                   </div>
-              </div><!-- /.modal-content -->
-          </div><!-- /.modal-dialog -->
-      </div><!-- /.modal -->
-
-      <!-- Dasta chat modal -->
-      <div class="">
-        
+                </div> <!-- Visitor path ends here -->
+                <!-- Client details starts here -->
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    Visitor Path
+                  </div>
+                  <div class="panel-body">
+                  Basic panel starts here
+                  </div>
+                </div>  <!-- Client details ends here -->           
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
     </div>
 </div>
