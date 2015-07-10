@@ -55,7 +55,7 @@ app.config(function ($httpProvider) {
  * If user is authenticated we will send the request to the server 
  * Else we will redirect the user to the login page in this scenario it is INDEX page
  */
-app.run(function($rootScope, $location, $window, $state, $timeout, AuthenticationService) {
+app.run(function($rootScope, $location, $window, $state, $timeout, AuthStatus, AuthenticationService) {
 
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, nextRoute, currentRoute) {
 
@@ -136,23 +136,37 @@ app.run(function($rootScope, $location, $window, $state, $timeout, Authenticatio
             * If the user is authenticated but he/she tries open the index page 
             * Then user can't access the index page unless and untill if the user is logged out. 
             */
-            if($window.location.href.indexOf('index') > -1){
+            AuthStatus.isLoggedIn().then(function(data){
 
-                console.log("I am in safe mode");
-                $location.path('dashboard');
-                //$window.location.href = '#/home';
-            }  
-            else if($location.path() === '/dashboard'){
+                if(data.status == 200){
 
-                console.log("I am in dashboard,......................");
-                $location.path('/dashboard/overview');
-                //$window.location.href = '#/dashboard/overview';
-            }
-            // else if($location.path() === '/dashboard' || $location.path() === '/dashboard/'){
+                    $window.localStorage.removeItem('token');
+                    $window.localStorage.removeItem('username');
+                    $location.path('index');  
+                    console.log("I am in AuthStatus modules");                  
+                }
+                else{
 
-            //     $location.path('dashboard.overview');
-            // }
-            console.log($window.localStorage.username);
+                    if($window.location.href.indexOf('index') > -1){
+
+                        console.log("I am in safe mode");
+                        $location.path('dashboard');
+                        //$window.location.href = '#/home';
+                    }  
+                    else if($location.path() === '/dashboard'){
+
+                        console.log("I am in dashboard,......................");
+                        $location.path('/dashboard/overview');
+                        //$window.location.href = '#/dashboard/overview';
+                    }
+                    // else if($location.path() === '/dashboard' || $location.path() === '/dashboard/'){
+
+                    //     $location.path('dashboard.overview');
+                    // }
+                    console.log($window.localStorage.username);                    
+                }
+            });
+
         }
         else{
 
@@ -180,6 +194,28 @@ app.factory('AuthenticationService', function() {
         isAuthenticated: false
     }
     return auth;
+});
+
+app.factory('AuthStatus', function($http, $q){
+
+    var factory = {};
+    factory.isLoggedIn = function(){
+
+        return $http.get('/isLoggedIn').then(function(response){
+
+            console.log(response.data);
+            
+            if(typeof response.data === 'object'){
+                return response.data;
+            }
+            else{
+                return $q.reject(response.data);
+            }
+        }, function(response){
+            return $q.reject(response.data);
+        });
+    };
+    return factory;
 });
 
 /*

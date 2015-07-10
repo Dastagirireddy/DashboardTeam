@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
-var mongodbURL = 'mongodb://10.241.204.9:27017/CIAnalytics';
-// var mongodbURL = 'mongodb://localhost/CIAnalytics';
+// var mongodbURL = 'mongodb://10.241.204.9:27017/CIAnalytics';
+var mongodbURL = 'mongodb://localhost/CIAnalytics';
 var mongodbOptions = {};
 
 // MongoDB connection

@@ -85,6 +85,25 @@ exports.logout = function(req, res){
 	res.json(data);
 };
 
+// Exporting isLoggedIn module
+exports.isLoggedIn = function(req, res){
+
+	var data = {};
+	//console.log(req.session_state.user);
+	if(!req.session_state.user){
+
+		//console.log("I am in 1");
+		//req.session_state.reset();
+		res.clearCookie('regId');
+		data.status = 200;
+	}
+	else{
+		// data.status = 403;
+		//console.log("I am in 2");
+	}
+	res.json(data);	
+};
+
 //Exporting getUserDetails module
 exports.getUserDetails = function(req, res){
 

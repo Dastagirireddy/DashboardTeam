@@ -72,7 +72,7 @@
                         <pre>
                         <code>
 &lt;script&gt;
-(function(){var e=document.createElement("script");e.src="http://10.241.204.9:3000/dashboard.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t);var d=document.createElement("input");d.setAttribute("id","dashboard"),d.type="hidden",d.value="{{ overview.webId }}",document.body.appendChild(d)}());window.onload=function(){window.Validator()};
+(function(){var e=document.createElement("script");e.src="http://{{ overview.host }}/dashboard.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t);var d=document.createElement("input");d.setAttribute("id","dashboard"),d.type="hidden",d.value="{{ overview.webId }}",document.body.appendChild(d)}());window.onload=function(){window.Validator()};
 &lt;/script&gt;
 
                         </code>

@@ -45,6 +45,9 @@ app.post('/login', routes.account.login);
 
 app.get('/logout', routes.account.logout);
 
+// On every route change check whether the is exists or not
+app.get('/isLoggedIn', routes.account.isLoggedIn);
+
 // collecting User details for Overview page
 app.get('/getUserDetails', routes.account.getUserDetails);
 
