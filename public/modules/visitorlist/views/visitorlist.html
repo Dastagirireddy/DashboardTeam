@@ -9,15 +9,15 @@
     <div class="graph-wrapper graph-wrapper-white" data-ng-controller="LiveVisitorController">
     	<div class="dynamictable"> <!-- division of table starts here-->
         <p class="heading">ActiveVisitors</p>
-        <table class="table table-striped wrapper">
-        <tr>
+        <table class="table table-striped  wrapper">
+        <tr class="info">
             <th>SocketID</th>
             <th>Browser</th>
             <th>OS</th>
             <th>Location</th>
             <th>Pages</th>
         </tr>
-          <tr ng-repeat="visitor in liveVisitor" data-toggle="modal" data-target="#visitorModal" ng-click="showDetails(visitor)" ng-class="{selected: $index === selectedRow}">
+          <tr ng-repeat="visitor in liveVisitor" data-toggle="modal" data-target="#visitorModal" ng-click="showDetails(visitor)" ng-class="{selected: $index === selectedRow}" ng-class="{warning: $even + 1}">
             <td>#{{ visitor.socketId }}</td>
             <td><span class="bg-icon" data-ng-style="getBrowser(visitor.browser.name)"></span></td>
             <td><span class="os-icon" data-ng-style="getOs(visitor.platform.os)"></span></td>

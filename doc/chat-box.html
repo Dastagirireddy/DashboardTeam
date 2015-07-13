@@ -88,7 +88,7 @@
 	</div>
 </div>
 </body>
-<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+<script src="http://192.168.0.19:3000/socket.io/socket.io.js"></script>
 <script type="text/javascript">
 
 	var chatArea = document.getElementById('chat-area'),
@@ -98,7 +98,7 @@
 		messages = document.getElementById('messages');
 
 	// Sockets logic implementation for chatting purpose
-	var o = io.connect("http://localhost:3000",{query: "webId=<%= webId %>"});
+	var o = io.connect("http://192.168.0.19:3000",{query: "webId=<%= webId %>", 'sync disconnect on unload': true});
 
 	// Initializing cookie value Event from server
 	o.on("socketId",function(o){

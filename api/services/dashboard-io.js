@@ -22,7 +22,9 @@ exports.dashboardIO = function(io, client, db, routes){
 
 			cookies = cookie.parse(client.handshake.headers.cookie);
 		}catch(ex){
-			//console.log("Parsing cookies raised an exception,..");
+			console.log("Parsing cookies raised an exception,..");
+			console.log(client.request.headers);
+			cookies = {};			
 		}
 
 		if(typeof cookies === 'object') {
@@ -256,21 +258,23 @@ exports.dashboardIO = function(io, client, db, routes){
 
 					db.chatModel.findOne({roomName: client.room, socketId: user}, function(e2, s2){
 						
-						//console.log(s2);
-						client.emit('messages', s2.messages);
-						if(socketMap.hasOwnProperty(user)){
+						if(s2){
+							//console.log(s2);
+							client.emit('messages', s2.messages);
+							if(socketMap.hasOwnProperty(user)){
 
-							var arr = socketMap[user].users;
-							//console.log("&&&&&");
-							//console.log(arr);
-							for(var i=0;i<arr.length;i++){
+								var arr = socketMap[user].users;
+								//console.log("&&&&&");
+								//console.log(arr);
+								for(var i=0;i<arr.length;i++){
 
-								//io.sockets.to(arr[i]).emit('pingAdmin', s2.message);
-								console.log("Admin is emitting message to client");
-								io.sockets.to(arr[i]).emit('messages', s2.messages);
-							}
-							//io.sockets.to(client.room).emit('messages', s2.messages);
-						}				
+									//io.sockets.to(arr[i]).emit('pingAdmin', s2.message);
+									console.log("Admin is emitting message to client");
+									io.sockets.to(arr[i]).emit('messages', s2.messages);
+								}
+								//io.sockets.to(client.room).emit('messages', s2.messages);
+							}								
+						}
 					});	
 				//}			
 			});
@@ -290,19 +294,21 @@ exports.dashboardIO = function(io, client, db, routes){
 
 					db.chatModel.findOne({roomName: client.room, socketId: client.socketId}, function(e2, s2){
 
-						client.emit('messages', s2.messages);
+						if(s2){
+							client.emit('messages', s2.messages);
 
-						if(socketMap.hasOwnProperty(admin)){
+							if(socketMap.hasOwnProperty(admin)){
 
-							var arr = socketMap[admin].users;
-							for(var i=0;i<arr.length;i++){
+								var arr = socketMap[admin].users;
+								for(var i=0;i<arr.length;i++){
 
-								//console.log(i);
-								console.log("Client emitting message to the Admin");
-								io.sockets.to(arr[i]).emit('messages', s2.messages);
-							}
+									//console.log(i);
+									console.log("Client emitting message to the Admin");
+									io.sockets.to(arr[i]).emit('messages', s2.messages);
+								}
 
-						}				
+							}							
+						}
 					});					
 				//}
 			});

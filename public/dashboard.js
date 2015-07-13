@@ -32,7 +32,7 @@
         //console.log(xmlhttp.responseText);
       }
       var dashboard = document.getElementById('dashboard');
-      xmlhttp.open("GET","http://localhost:3000/v/"+dashboard.value,true);
+      xmlhttp.open("GET","http://192.168.0.19:3000/v/"+dashboard.value,true);
       xmlhttp.send();
 
       // var form = document.createElement('form');
