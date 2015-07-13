@@ -105,12 +105,18 @@ angular.module('analyticsApp')
 				oldValue = newValue = 1;
 				factor = 1;
 			}
-			if(factor >= 0){
+			if(factor > 0){
 
 				var perc = (factor/oldValue) * 100;
 				pagePerc.icon = 'up';
 				pagePerc.perc = Math.floor(perc);
 				pagePerc.performance = 'higher';
+			}
+			else if(factor == 0){
+
+				pagePerc.perc = 0;
+				pagePerc.performance = 'lower';
+				pagePerc.icon = 'down';
 			}
 			else{
 

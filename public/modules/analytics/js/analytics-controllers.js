@@ -161,7 +161,9 @@ angular.module('analyticsApp')
 				var visitorCount = UsersCountService.getUserCount(data.clients);
 				$scope.visitor = visitorCount;
 				//console.log('old pages count');
-				//console.log(oldPages);
+				console.log(newPages);
+				console.log(oldPages);
+				
 				/*linegraph*/
 				var myPages = [];
 				for(var i in oldPages){
@@ -169,7 +171,7 @@ angular.module('analyticsApp')
 					myPages.push(oldPages[i]);
 				}
 
-				//console.log(myPages);
+				console.log(myPages);
 				$scope.pageviews = PageviewsService.getPageViewSum(myPages);
 				//console.log(myPages);
 				if(myPages.length > 0){
